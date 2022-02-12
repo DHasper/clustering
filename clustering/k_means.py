@@ -1,9 +1,9 @@
 import random
-import math
+from math_functions import euclidean_distance, compute_means
 from point import Point
 
 def k_means(points, cluster_count=2):
-    """k_means clustering algorithm that clusters points to K clusters."""
+    """k-means clustering algorithm that clusters points in cluster_count clusters."""
 
     min_x = min([point.x for point in points])
     max_x = max([point.x for point in points])
@@ -19,7 +19,7 @@ def k_means(points, cluster_count=2):
     finished = False
     while not finished:
         # Compute new centroids to the mean of the cluster.
-        centroids = compute_centroids(clusters)
+        centroids = compute_means(clusters)
 
         # Calculate new clusters.
         new_clusters = compute_clusters(points, centroids)
@@ -30,7 +30,7 @@ def k_means(points, cluster_count=2):
         else:
             finished = True
 
-    return clusters, centroids
+    return clusters
 
 def compute_clusters(points, centroids):
     """Computes clusters by grouping points to the centroid with the shortest euclidian distance."""
@@ -41,7 +41,7 @@ def compute_clusters(points, centroids):
         closest_centroid, closest_distance = 0, float("inf")
 
         for i, centroid in enumerate(centroids):
-            distance = euclidian_distance(point, centroid)
+            distance = euclidean_distance(point, centroid)
 
             if distance < closest_distance:
                 closest_distance = distance
@@ -50,24 +50,3 @@ def compute_clusters(points, centroids):
         clusters[closest_centroid].append(point)
 
     return clusters
-
-def compute_centroids(clusters):
-    """Computes the mean point given a list of clusters of points."""
-
-    means = [0] * len(clusters)
-
-    for i, cluster in enumerate(clusters):
-        mean_x = sum([point.x for point in cluster]) / len(cluster)
-        mean_y = sum([point.y for point in cluster]) / len(cluster)
-
-        means[i] = Point(mean_x, mean_y)
-
-    return means
-
-def euclidian_distance(p1, p2):
-    """Calculates the euclidian distance given 2 points
-    
-    Uses the formula d(p, q) = √((q₂ - p₁)² + (q₂ - p₁)²) 
-    """
-
-    return math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2)
